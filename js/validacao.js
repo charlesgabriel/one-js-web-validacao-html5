@@ -39,11 +39,25 @@ const mensagensDeErro = {
         valueMissing: 'O campo CPF não pode estar vazio.',
         customError: 'O CPF digitado não é válido.',
     },
+    cep: {
+        valueMissing: 'O campo CEP não pode estar vazio.',
+        patternMismatch: 'O CEP digitado não é válido.',
+    },
+    logradouro: {
+        valueMissing: 'O campo Logradouro não pode estar vazio.',
+    },
+    cidade: {
+        valueMissing: 'O campo Cidade não pode estar vazio.',
+    },
+    estado: {
+        valueMissing: 'O campo Estado não pode estar vazio.',
+    },
 };
 
 const validadores = {
     dataNascimento:input => validaDataNascimento(input),
     cpf:input => validaCPF(input),
+    cep:input => recuperarCEP(input),
 }
 
 function mostraMensagemDeErro(tipoDeInput, input) {
@@ -135,4 +149,23 @@ function checaDigitoVerificardor(cpf, multiplicador) {
 
 function confirmaDigito(soma) {
     return 11 - (soma % 11);
+}
+
+function recuperarCEP(input) {
+    const cep = input.value.replace(/\D/g, '');
+    const url = `https://viacep.com.br/ws/${cep}/json/`;
+    const options = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'content-type': 'application/json;charset=utf-8',
+        }
+    }
+    if(!input.validity.patternMismatch && !input.validity.valueMissing) {
+        fetch(url, options).then(
+            response => response.json()
+        ).then(
+            data => console.log(data)
+        );
+    }
 }
